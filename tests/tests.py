@@ -38,7 +38,7 @@ class CachingTestCase(COPTestBase):
         """ Проверяет, что кэш наполняется."""
         self.assertIsNotNone(self.cache_content)
 
-    def testCacheDistinctsByUrl(self):
+    def testCacheDiffersByUrl(self):
         """ Проверяет, что кэш отличается для разных URL."""
         p2 = Project.objects.create(name="another")
         Module.objects.create(project=p2, name="m3")
@@ -90,3 +90,8 @@ class RelatedLookupTestCase(COPTestBase):
         self.project.name = "another"
         self.project.save()
         self.assertPageInvalidated()
+
+
+class ConfigViewTestCase(COPTestBase):
+    def get_url(self):
+        return reverse('config', args=(self.m1.pk,))

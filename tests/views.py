@@ -4,7 +4,7 @@
 from django.http import Http404
 from django.views.generic import TemplateView
 from cacheops_pages.views import COPMixin
-from models import Project
+from models import Project, Module
 
 
 class TestView(COPMixin, TemplateView):
@@ -33,4 +33,17 @@ class TestRelatedLookup(COPMixin, TemplateView):
             raise Http404()
         cd['project'] = project
         self.depends_on(Project.objects.filter(name=kwargs['name']))
+        return cd
+
+
+class TestConfigView(TemplateView):
+    template_name = 'test.html'
+
+    def get_context_data(self, **kwargs):
+        cd = super(TestConfigView, self).get_context_data(**kwargs)
+        try:
+            module = Module.objects.get(name=kwargs['pk'])
+        except Module.DoesNotExist:
+            raise Http404()
+        cd['module'] = module
         return cd

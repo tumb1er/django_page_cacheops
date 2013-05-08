@@ -155,3 +155,13 @@ CACHEOPS_REDIS = {
 CACHEOPS = {
     '*.*': ('just_enable', 60*60),
 }
+
+CACHEOPS_PAGES = {
+    'django_page_cacheops.tests.views.TestConfigView': {
+        'CACHE_KEY': 'CACHE:{path}{query__param1}{headers__accept}',
+        'DEPENDS_ON': (
+            ('tests.models.Project', {'pk': 'kwargs__pk'}),
+            ('tests.models.Module', {'project': 'kwargs__pk'}),
+        )
+    }
+}

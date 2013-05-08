@@ -5,6 +5,7 @@ from django.db.models import Model
 from cacheops.conf import redis_client, model_profile
 from cacheops.invalidation import conj_cache_key, cache_schemes
 from cacheops.utils import non_proxy, conj_scheme, dnf
+from config import CacheConfig
 
 
 def cache_page_by_queryset(model, cache_key, data, cond_dnf=[[]], timeout=None,
@@ -59,6 +60,11 @@ def cache_page(cache_key, cache_querysets, content):
 
 
 class CacheopsPagesMiddleware(object):
+    def process_request(self, request):
+        conf = CacheConfig(request)
+        request.cache_key = conf.cache_key
+        request.cache_querysets = conf.querysets
+
     def process_response(self, request, response):
         if (response.status_code == 200
             and request.method == 'GET'
