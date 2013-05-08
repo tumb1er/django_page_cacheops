@@ -1,0 +1,4 @@
+{{ project.name }}
+{% for m in project.module_set.all %}
+    {{ m.name }}
+{% endfor %}
