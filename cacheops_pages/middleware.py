@@ -61,14 +61,15 @@ def cache_page(cache_key, cache_querysets, content):
 
 class CacheopsPagesMiddleware(object):
     def process_request(self, request):
-        conf = CacheConfig(request)
-        request.cache_key = conf.cache_key
-        request.cache_querysets = conf.querysets
+        cache_config = CacheConfig(request)
+        if cache_config.config:
+            request.cache_key = cache_config.get_cache_key()
+            request.cache_querysets = cache_config.get_querysets()
 
     def process_response(self, request, response):
-        if (response.status_code == 200
-            and request.method == 'GET'
-            and hasattr(response, "cache_key")):
-            cache_page(response.cache_key, response.cache_querysets,
+        if not (response.status_code == 200 and request.method == 'GET'):
+            return response
+        if hasattr(request, "cache_key"):
+            cache_page(request.cache_key, request.cache_querysets,
                        response.content)
-        return response
+            return response

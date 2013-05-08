@@ -1,6 +1,7 @@
 # coding: utf-8
 
 # $Id: $
+from django.conf import settings
 from django.core.urlresolvers import reverse
 
 from django.test import TestCase
@@ -92,6 +93,32 @@ class RelatedLookupTestCase(COPTestBase):
         self.assertPageInvalidated()
 
 
-class ConfigViewTestCase(COPTestBase):
+class ConfigViewTestCase(TestCase):
+
+    def setUp(self):
+        self.project = Project.objects.create(name="project")
+        self.m1 = Module.objects.create(project=self.project, name="m1")
+        self.m2 = Module.objects.create(project=self.project, name="m2")
+        self.param1 = 'param'
+        self.url = self.get_url()
+        self.response = self.client.get(self.url, **{'Accept': 'text/html'})
+        self.redis = cacheops.conf.redis_client
+        self.accept = "text/html"
+        self.cache_key = self.get_cache_key()
+        self.cache_content = self.redis.get(self.cache_key)
+
+    def get_cache_key(self):
+        conf = settings.CACHEOPS_PAGES
+        c = conf['django_page_cacheops.tests.views.TestConfigView']
+        key = c['CACHE_KEY'].format(
+            path=self.url.split('?')[0],
+            query__param1=self.param1,
+            headers__accept='text/html'
+        )
+        return key
+
     def get_url(self):
-        return reverse('config', args=(self.m1.pk,))
+        return reverse('config', args=(self.m1.pk,)) + '?param1=' + self.param1
+
+    def testCacheKeyExists(self):
+        self.assertIsNotNone(self.cache_content)

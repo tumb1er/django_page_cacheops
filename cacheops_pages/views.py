@@ -26,6 +26,6 @@ class COPMixin(object):
 
     def get(self, request, *args, **kwargs):
         response = super(COPMixin, self).get(request,*args, **kwargs)
-        response.cache_key = self.get_cache_key(request)
-        response.cache_querysets = self.__querysets
+        request.cache_key = self.get_cache_key(request)
+        request.cache_querysets = self.__querysets
         return response

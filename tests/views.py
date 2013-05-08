@@ -42,7 +42,7 @@ class TestConfigView(TemplateView):
     def get_context_data(self, **kwargs):
         cd = super(TestConfigView, self).get_context_data(**kwargs)
         try:
-            module = Module.objects.get(name=kwargs['pk'])
+            module = Module.objects.get(pk=kwargs['pk'])
         except Module.DoesNotExist:
             raise Http404()
         cd['module'] = module
