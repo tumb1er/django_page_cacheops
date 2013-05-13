@@ -4,8 +4,9 @@
 
 
 class COPMixin(object):
-    """ Миксин, реализующий функциональность кэширования страницы
-    и указания зависимостей от QuerySet-ов для инвалидации.
+    """ CacheOpsPages mixin for cache key generation and
+    queryset dependency setup.
+    Should be first mixin in inheritance.
     """
 
     def __init__(self, *args, **kwargs):
@@ -14,18 +15,17 @@ class COPMixin(object):
 
     @classmethod
     def get_cache_key(cls, request):
-        """ Генерирует ключ редиса, под которым будет кэшироваться
-        контент страницы.
-        """
+        """ Generates cache key for page content caching."""
         return "CACHE:" + request.get_full_path()
 
     def depends_on(self, *querysets):
-        """ Регистрирует зависимость контента страницы от списка queryset-ов.
+        """ Registers dependency between querysets and page content.
         """
         self.__querysets.extend(querysets)
 
     def get(self, request, *args, **kwargs):
-        response = super(COPMixin, self).get(request,*args, **kwargs)
+        """ Sets cache key and querysets for processing in middleware."""
+        response = super(COPMixin, self).get(request, *args, **kwargs)
         request.cache_key = self.get_cache_key(request)
         request.cache_querysets = self.__querysets
         return response
