@@ -16,8 +16,6 @@ To cache page content with proper invalidation you must:
 3. tell cacheops to invalidate this cache key when any of querysets has been invalidated
 4. setup frontend to use redis cache
 
-Note that only GET and only HTTP_200_OK responses are cached.
-
 Configuration
 ------------
 
@@ -39,6 +37,11 @@ Configuration
         'cacheops_pages.middleware.CacheopsPagesMiddleware',
     )
 
+Limitations
+-----------
+
+1. Only GET and only HTTP_200_OK responses are cached.
+2. Only class-based views are cached
 
 Example for generic views
 -------------------------
@@ -83,6 +86,7 @@ No mixins needed, only middleware. This example will show cache config for url `
     }
 
 In config you could use these variables:
+
 1. `path` path without query params, in example `/test/view/1/`
 2. `full_path`, path with query, in example `/test/view/1/?param=3`
 3. `query__<key>` which contains value of <key> parameter in query string, in example `query__param` returns 3

@@ -60,8 +60,8 @@ def cache_page(cache_key, cache_querysets, content):
 
 
 class CacheopsPagesMiddleware(object):
-    def process_request(self, request):
-        cache_config = CacheConfig(request)
+    def process_view(self, request, view_func, view_args, view_kwargs):
+        cache_config = CacheConfig(request, view_func, view_args, view_kwargs)
         if cache_config.config:
             request.cache_key = cache_config.get_cache_key()
             request.cache_querysets = cache_config.get_querysets()

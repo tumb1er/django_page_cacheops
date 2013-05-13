@@ -11,25 +11,24 @@ from settings import CACHEOPS_PAGES
 class CacheConfig(object):
     cache_conf = CACHEOPS_PAGES
 
-    def __init__(self, request):
+    def __init__(self, request, view_func, view_args, view_kwargs):
         self.view_name = None
         self.args = []
         self.kwargs = {}
         self.context = None
-        self.init(request)
+        self.init(request, view_func, view_args, view_kwargs)
 
-    def init(self, request):
-        self.get_view_name(request)
+    def init(self, request, view_func, view_args, view_kwargs):
+        self.get_view_name(view_func)
+        self.args = view_args
+        self.kwargs = view_kwargs
         self.config = self.get_conf()
         if self.config:
             self.context = self.get_cache_context(request)
 
-    def get_view_name(self, request):
+    def get_view_name(self, view_func):
         try:
-            match = resolve(request.get_full_path())
-            view_class = match.func.func_closure[1].cell_contents
-            self.args = match.args
-            self.kwargs = match.kwargs
+            view_class = view_func.func_closure[1].cell_contents
             self.view_name = '%s.%s' % (
                 view_class.__module__, view_class.__name__)
         except (IndexError, AttributeError, Resolver404):
