@@ -76,9 +76,9 @@ Example for CACHEOPS_PAGES
 No mixins needed, only middleware. This example will show cache config for url `/test/view/(P<?pk>\d+)`
 
     CACHEOPS_PAGES = {
-        'views.TestConfigView': {                                           # View name for caching
-            'CACHE_KEY': 'CACHE:{path}{query__param}{headers__accept}',    # Cache key template
-            'DEPENDS_ON': (                                                 # List of querysets affecting page content
+        'views.TestConfigView': {                                       # View name for caching
+            'CACHE_KEY': 'CACHE:{path}{query__param}{headers__accept}', # Cache key template
+            'DEPENDS_ON': (                                             # List of querysets affecting page content
                 ('models.Project', {'pk': 'kwargs__pk'}),                   
                 ('models.Module', {'project': 'kwargs__pk'}),
             )
@@ -89,11 +89,13 @@ In config you could use these variables:
 
 1. `path` path without query params, in example `/test/view/1/`
 2. `full_path`, path with query, in example `/test/view/1/?param=3`
-3. `query__<key>` which contains value of <key> parameter in query string, in example `query__param` returns 3
-4. `kwargs__<key>` which contains value of <key> keyword argument passed to the view from url dispatcher, in example, `kwargs__pk` returns 1
-5. `headers__<key>` which contains value of <key> header from http request, in example:
+3. `query_string`, containing all query params.
+4. `query__<key>` which contains value of <key> parameter in query string, in example `query__param` returns 3
+5. `kwargs__<key>` which contains value of <key> keyword argument passed to the view from url dispatcher, in example, `kwargs__pk` returns 1
+6. `args__<i>` which contains <i> `args` item passed to the view from url dispatcher.
+7. `headers__<key>` which contains value of <key> header from http request, in example:
 
     GET /test/view/1/?param=3 HTTP/1.1
-    Accept: */*
+    Accept: text/html
 
-`headers__accept` returns `*.*`
+`headers__accept` returns "text/html"
