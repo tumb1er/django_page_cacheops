@@ -21,6 +21,7 @@ Configuration
 
 1. Add django-cacheops and cacheops_pages to INSTALLED_APPS
 
+
     INSTALLED_APPS += (
         'cacheops',
         'cacheops_pages',
@@ -29,9 +30,12 @@ Configuration
 2. Configure cacheops [See README](https://github.com/Suor/django-cacheops/blob/master/README.rst)
 3. Add cacheops-pages empty config
 
+
     CACHEOPS_PAGES = {}
+    CACHEOPS_PAGES_DEFAULT_KEY = "CACHE:{full_path}"
 
 4. Add middleware:
+
 
     MIDDLEWARE_CLASSES += (
         'cacheops_pages.middleware.CacheopsPagesMiddleware',
@@ -48,12 +52,14 @@ Example for generic views
 
 1. Add COPMixin to cached view
 
+
     from cacheops_pages.views import COPMixin
     class TestView(COPMixin, TemplateView):
-        ....
+        ...
 
 2. Call self.depends_on to tell which querysets affect view response
-    
+
+
     project = Project.objects.get(pk=kwargs['pk'])
     self.depends_on(project)
     self.depends_on(project.module_set.all())
@@ -64,7 +70,7 @@ with [redis2-nginx-module](https://github.com/agentzh/redis2-nginx-module)
 
     # GET /get?param=value
     location /get {
-        redis2_query get $key$arg_param;
+        redis2_query get CACHE:$path:$arg_param;
         redis2_pass foo.com:6379;
     }
 
@@ -90,12 +96,15 @@ In config you could use these variables:
 1. `path` path without query params, in example `/test/view/1/`
 2. `full_path`, path with query, in example `/test/view/1/?param=3`
 3. `query_string`, containing all query params.
+4. `session_key`, containing session id for authenticated users (or empty string for anonymous)
 4. `query__<key>` which contains value of <key> parameter in query string, in example `query__param` returns 3
 5. `kwargs__<key>` which contains value of <key> keyword argument passed to the view from url dispatcher, in example, `kwargs__pk` returns 1
-6. `args__<i>` which contains <i> `args` item passed to the view from url dispatcher.
+6. `args__<i>` which contains  `args[i]` item passed to the view from url dispatcher.
 7. `headers__<key>` which contains value of <key> header from http request, in example:
+
 
     GET /test/view/1/?param=3 HTTP/1.1
     Accept: text/html
+
 
 `headers__accept` returns "text/html"

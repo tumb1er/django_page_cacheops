@@ -156,6 +156,8 @@ CACHEOPS = {
     '*.*': ('just_enable', 60*60),
 }
 
+CACHEOPS_PAGES_DEFAULT_KEY = 'CACHE:{path}{session_key}'
+
 CACHEOPS_PAGES = {
     'django_page_cacheops.tests.views.TestConfigView': {
         'CACHE_KEY': 'CACHE:{path}{query__param1}{headers__accept}',

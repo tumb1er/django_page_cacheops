@@ -3,6 +3,7 @@
 # $Id: $
 import re
 import urlparse
+from django.conf import settings
 from django.core.urlresolvers import resolve, Resolver404
 from django.utils.importlib import import_module
 from settings import CACHEOPS_PAGES
@@ -63,6 +64,10 @@ class CacheConfig(object):
         except ValueError:
             path = full_path
             query_string = ''
+        if request.user.is_authenticated():
+            session_key = request.session.session_key
+        else:
+            session_key = ''
         # compute `query`, `args`, `kwargs` and `headers` dicts
         query = dict(urlparse.parse_qsl(query_string))
         headers = {k.lower(): v for k, v in request.META.items()}
@@ -93,7 +98,9 @@ class CacheConfig(object):
     def get_cache_key(self):
         """ Computes cache key value from cache context."""
         ctx = {k: v or '' for k, v in self.context.items()}
-        return self.config['CACHE_KEY'].format(**ctx)
+        cache_key = self.config.get('CACHE_KEY',
+                                    settings.CACHEOPS_PAGES_DEFAULT_KEY)
+        return cache_key.format(**ctx)
 
     def get_querysets(self):
         """ Constructs querysets from cache config."""
