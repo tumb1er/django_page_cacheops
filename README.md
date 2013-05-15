@@ -21,25 +21,22 @@ Configuration
 
 1. Add django-cacheops and cacheops_pages to INSTALLED_APPS
 
-
-    INSTALLED_APPS += (
-        'cacheops',
-        'cacheops_pages',
-    )
+        INSTALLED_APPS += (
+            'cacheops',
+            'cacheops_pages',
+        )
 
 2. Configure cacheops [See README](https://github.com/Suor/django-cacheops/blob/master/README.rst)
 3. Add cacheops-pages empty config
 
-
-    CACHEOPS_PAGES = {}
-    CACHEOPS_PAGES_DEFAULT_KEY = "CACHE:{full_path}"
+        CACHEOPS_PAGES = {}
+        CACHEOPS_PAGES_DEFAULT_KEY = "CACHE:{full_path}"
 
 4. Add middleware:
 
-
-    MIDDLEWARE_CLASSES += (
-        'cacheops_pages.middleware.CacheopsPagesMiddleware',
-    )
+        MIDDLEWARE_CLASSES += (
+            'cacheops_pages.middleware.CacheopsPagesMiddleware',
+        )
 
 Limitations
 -----------
@@ -52,17 +49,15 @@ Example for generic views
 
 1. Add COPMixin to cached view
 
-
-    from cacheops_pages.views import COPMixin
-    class TestView(COPMixin, TemplateView):
-        ...
+        from cacheops_pages.views import COPMixin
+        class TestView(COPMixin, TemplateView):
+            ...
 
 2. Call self.depends_on to tell which querysets affect view response
 
-
-    project = Project.objects.get(pk=kwargs['pk'])
-    self.depends_on(project)
-    self.depends_on(project.module_set.all())
+        project = Project.objects.get(pk=kwargs['pk'])
+        self.depends_on(project)
+        self.depends_on(project.module_set.all())
 
 3. Setup frontend to use redis cache for it
 
@@ -102,9 +97,7 @@ In config you could use these variables:
 6. `args__<i>` which contains  `args[i]` item passed to the view from url dispatcher.
 7. `headers__<key>` which contains value of <key> header from http request, in example:
 
-
-    GET /test/view/1/?param=3 HTTP/1.1
-    Accept: text/html
-
+        GET /test/view/1/?param=3 HTTP/1.1
+        Accept: text/html
 
 `headers__accept` returns "text/html"
