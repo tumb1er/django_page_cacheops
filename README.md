@@ -61,13 +61,13 @@ Example for generic views
 
 3. Setup frontend to use redis cache for it
 
-with [redis2-nginx-module](https://github.com/agentzh/redis2-nginx-module)
+    with [redis2-nginx-module](https://github.com/agentzh/redis2-nginx-module)
 
-    # GET /get?param=value
-    location /get {
-        redis2_query get CACHE:$path:$arg_param;
-        redis2_pass foo.com:6379;
-    }
+        # GET /get?param=value
+        location /get {
+            redis2_query get CACHE:$path:$arg_param;
+            redis2_pass foo.com:6379;
+        }
 
 This code is more intellectual than configuring caching CACHEOPS_PAGES, but you will not be able to change caching in production without deploying new release.
 
